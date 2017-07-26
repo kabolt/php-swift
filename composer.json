@@ -1,0 +1,28 @@
+{
+    "name": "kabolt/php-swift",
+    "type": "library",
+    "description": "This is a simple PHP library handling API CALL to openstack swift object storage",
+    "keywords": ["library", "openstack", "swift"],
+    "homepage": "https://git.kabolt.fr/gilles/php-swift",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gilles Grossmann-Wirth",
+            "homepage": "https://kabolt.fr"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swift\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Swift\\Tests\\": "tests/"
+        }
+    }
+}
