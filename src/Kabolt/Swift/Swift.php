@@ -6,14 +6,29 @@ use GuzzleHttp\Client;
 
 class Swift
 {
+    protected $username;
+    protected $password;
+    protected $projectName;
+    protected $authurl;
+    protected $storageUrl;
 
-    public function __construct($username, $password, $authUrl, $projectName)
+    protected $token;
+
+    public function __construct($options)
     {
 
-      // token
+      $this->username = $options['username'];
+      $this->password = $options['password'];
+      $this->authUrl = $options['authUrl'];
+      $this->projectName = $options['projectName'];
+      $this->storageUrl = $options['storageUrl'];
+    }
+
+
+    public function authenticate() {
 
       $client = new Client();
-      $res = $client->request('POST', $authUrl . '/auth/token', [
+      $res = $client->request('POST', $this->authUrl . 'auth/tokens', [
         'json' => [
           'auth' => [
             'identity' => [
@@ -35,8 +50,32 @@ class Swift
         ]
       ]);
 
-      echo $res;
+      $this->token = $res->getHeaderLine('X-Subject-Token');
+      //$tokenObject = json_decode($res->getBody());
+      //echo $token;
+    }
 
+    public function getToken() {
+      return $this->token;
+    }
+
+    public function setToken($token) {
+
+      // check token validity here
+      // If token is good
+      $this->token = $token;
+    }
+
+
+    public function getContainer($name) {
+
+      $options = [
+        'token' => $this->token,
+        'storageUrl' => $this->storageUrl,
+        'projectName' => $this->projectName,
+        'name' => $name
+      ];
+      return new Container($options);
     }
 
 
