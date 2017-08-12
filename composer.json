@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Swift\\": "src/"
+            "Kabolt\\Swift\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Swift\\Tests\\": "tests/"
+            "Kabolt\\Swift\\Tests\\": "tests/"
         }
     }
 }
