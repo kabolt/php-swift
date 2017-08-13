@@ -12,7 +12,7 @@ class Swift
     protected $authurl;
     protected $storageUrl;
 
-    protected $token;
+    protected $token = null;
 
     public function __construct($options)
     {
@@ -66,6 +66,19 @@ class Swift
       $this->token = $token;
     }
 
+    public function createContainer($name) {
+
+      $client = new Client();
+      $finaleUrl = $this->storageUrl . 'AUTH_' . $this->projectName;
+      $res = $client->request('PUT', $finaleUrl . '/' . $name, [
+        'headers' => [
+          'X-Auth-Token' => $this->token
+        ]
+      ]);
+
+      return $this->getContainer($name);
+
+    }
 
     public function getContainer($name) {
 
