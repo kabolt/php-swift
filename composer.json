@@ -11,7 +11,9 @@
             "homepage": "https://kabolt.fr"
         }
     ],
-    "require": {},
+    "require": {
+      "guzzlehttp/guzzle": "6.3.0"
+    },
     "require-dev": {
         "phpunit/phpunit": "^6"
     },
