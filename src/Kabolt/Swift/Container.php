@@ -9,71 +9,47 @@ class Container
 
     protected $token;
     public $name;
-    protected $storageUrl;
-    protected $finaleUrl;
     protected $lastObjectList;
     public $objectCount;
 
-    public function __construct($options)
+    public function __construct($options, $identityService)
     {
-
-      $this->storageUrl = $options['storageUrl'];
-      $this->token = $options['token'];
       $this->name = $options['name'];
-      $this->projectName = $options['projectName'];
-
-      $this->finaleUrl = $this->storageUrl . 'AUTH_' . $this->projectName;
-
-      $client = new Client();
-
-      $res = $client->request('GET', $this->finaleUrl . '/' . $this->name . '?format=json', [
-        'headers' => [
-          'X-Auth-Token' => $this->token
-        ]
-      ]);
-
-      $this->lastObjectList = json_decode($res->getBody());
-      $this->objectCount = $res->getHeaderLine('X-Container-Object-Count');
+      $this->is = $identityService;
+      $this->url = $this->is->getEndpoint($this->name);
     }
 
     public function getObject($name) {
-       return new Object($name, $this);
+       return new Object(['name' => $name, 'containerName' => $this->name], $this->is);
     }
 
     public function createObject($name, $data) {
-      $object = new Object($name, $this);
+      $object = new Object(['name' => $name, 'containerName' => $this->name], $this->is);
       $object->setContent($data);
       return $object;
     }
 
+    public function upload() {
+      $client = $this->is->getClient();
+      $res = $client->request('PUT', $this->url);
+    }
+
     public function delete() {
-      $client = new Client();
-      $res = $client->request('DELETE', $this->finaleUrl . '/' . $this->name, [
-        'headers' => [
-          'X-Auth-Token' => $this->token
-        ]
-      ]);
+      $client = $this->is->getClient();
+      $res = $client->request('DELETE', $this->url);
     }
 
     public function objectExists($objectName) {
-      $object = new Object($objectName, $this);
+      $object = new Object(['name' => $name, 'containerName' => $this->name], $this->is);
       return $object->exists();
     }
 
     public function listObjects() {
-      $client = new Client();
-
-      $res = $client->request('GET', $this->finaleUrl . '/' . $this->name . '?format=json', [
-        'headers' => [
-          'X-Auth-Token' => $this->token
-        ]
-      ]);
-
+      $client = $this->is->getClient();
+      $res = $client->request('GET', $this->url . '?format=json');
       $this->lastObjectList = json_decode($res->getBody());
       return $this->lastObjectList;
-
     }
-
 
     /**
      * Get the value of Name
@@ -83,31 +59,6 @@ class Container
     public function getName()
     {
         return $this->name;
-    }
-
-    public function getToken()
-    {
-      return $this->token;
-    }
-
-    /**
-     * Get the value of Storage Url
-     *
-     * @return mixed
-     */
-    public function getStorageUrl()
-    {
-        return $this->storageUrl;
-    }
-
-    /**
-     * Get the value of Final Url
-     *
-     * @return mixed
-     */
-    public function getFinaleUrl()
-    {
-        return $this->finaleUrl;
     }
 
     /**

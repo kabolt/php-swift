@@ -8,29 +8,24 @@ class Object
 {
 
     public $name;
+    public $containerName;
     public $content;
     public $contentType;
-    protected $container;
+    private $is;
 
-    public function __construct($name, $container)
+    public function __construct($options, $identityService)
     {
-
-      $this->container = $container;
-      $this->setName($name);
+      $this->name = $options['name'];
+      $this->containerName = $options['containerName'];
+      $this->is = $identityService;
+      $this->url = $this->is->getEndpoint($this->containerName . '/' . $this->name);
     }
 
-
     public function download() {
-      $client = new Client();
-      $res = $client->request('GET', $this->container->getFinaleUrl() . '/' . $this->container->getName() . '/' . $this->name, [
-        'headers' => [
-          'X-Auth-Token' => $this->container->getToken()
-        ]
-      ]);
-
+      $client = $this->is->getClient();
+      $res = $client->request('GET', $this->url);
       $this->setContent($res->getBody());
       $this->setContentType($res->getHeaderLine('Content-Type'));
-
       return $this->getContent();
     }
 
@@ -38,34 +33,20 @@ class Object
       if(null === $this->getContent())
         throw new \Exception("Swift: cannot upload empty object", 1);
 
-      $client = new Client();
-      $res = $client->request('PUT', $this->container->getFinaleUrl() . '/' . $this->container->getName() . '/' . $this->name, [
-        'headers' => [
-          'X-Auth-Token' => $this->container->getToken()
-        ],
-        'body' => $this->getContent()
-      ]);
+      $client = $this->is->getClient();
+      $res = $client->request('PUT', $this->url, ['body' => $this->getContent()]);
     }
 
     public function exists() {
-      $client = new Client();
 
+      $client = $this->is->getClient();
       try {
-
-        $res = $client->request('HEAD', $this->container->getFinaleUrl() . '/' . $this->container->getName() . '/' . $this->name, [
-          'headers' => [
-            'X-Auth-Token' => $this->container->getToken()
-          ],
-          'body' => $this->getContent()
-        ]);
-
+        $res = $client->request('HEAD', $this->url);
         return true;
 
       } catch (\GuzzleHttp\Exception\ClientException $e) {
           if(404 == $e->getCode()) return false;
       }
-
-
     }
 
     /**
@@ -78,17 +59,12 @@ class Object
     public function setContent($content)
     {
         $this->content = $content;
-
         return $this;
     }
 
     public function delete() {
       $client = new Client();
-      $res = $client->request('DELETE', $this->container->getFinaleUrl() . '/' . $this->container->getName() . '/' . $this->name, [
-        'headers' => [
-          'X-Auth-Token' => $this->container->getToken()
-        ]
-      ]);
+      $res = $client->request('DELETE', $this->url);
     }
 
 
