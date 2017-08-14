@@ -21,9 +21,7 @@ class Swift
 
     public function getContainer($name) {
       $container = new Container(['name' => $name], $this->identityService);
-      if(!$container->exists())
-        throw new \Exception('Swift : Container "' . $name . '" does not exists', 1);
-      return $container;
+      return $container->exists() ? $container : null;
     }
 
     public function getObject($name, $containerName) {

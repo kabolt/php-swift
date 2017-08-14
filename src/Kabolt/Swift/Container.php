@@ -29,9 +29,19 @@ class Container
       return $object;
     }
 
-    public function upload() {
+    public function upload() {
       $client = $this->is->getClient();
       $res = $client->request('PUT', $this->url);
+    }
+
+    public function exists() {
+      $client = $this->is->getClient();
+      try {
+        $res = $client->request('HEAD', $this->url);
+        return true;
+      } catch (\GuzzleHttp\Exception\ClientException $e) {
+          if(404 == $e->getCode()) return false;
+      }
     }
 
     public function delete() {
