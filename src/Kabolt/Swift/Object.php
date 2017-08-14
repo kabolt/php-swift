@@ -63,7 +63,7 @@ class Object
     }
 
     public function delete() {
-      $client = new Client();
+      $client = $this->is->getClient();
       $res = $client->request('DELETE', $this->url);
     }
 
