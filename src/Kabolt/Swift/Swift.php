@@ -7,7 +7,6 @@ use GuzzleHttp\Client;
 class Swift
 {
 
-    protected $token = null;
     protected $identityService;
 
     public function __construct($identityService)
