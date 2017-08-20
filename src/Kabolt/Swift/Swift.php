@@ -13,8 +13,7 @@ class Swift
     {
       $this->identityService = $identityService;
     }
-
-
+    
     public function createContainer($name) {
       return new Container(['name' => $name], $this->identityService);
     }

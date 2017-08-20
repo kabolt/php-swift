@@ -30,11 +30,11 @@ class Object
     }
 
     public function upload() {
-      if(null === $this->getContent())
-        throw new \Exception("Swift: cannot upload empty object", 1);
+        if(null === $this->getContent())
+          throw new \Exception("Swift: cannot upload empty object", 1);
 
-      $client = $this->is->getClient();
-      $res = $client->request('PUT', $this->url, ['body' => $this->getContent()]);
+        $client = $this->is->getClient();
+        $res = $client->request('PUT', $this->url, ['body' => $this->getContent()]);
     }
 
     public function exists() {

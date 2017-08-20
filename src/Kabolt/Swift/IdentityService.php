@@ -13,7 +13,7 @@ class IdentityService
     protected $storageUrl;
     protected $client;
     protected $endpoint;
-
+    protected $tokenExpirationDate;
     protected $token = null;
 
     public function __construct($options)
@@ -54,6 +54,9 @@ class IdentityService
       ]);
 
       $this->setToken($res->getHeaderLine('X-Subject-Token'));
+      $content = json_decode($res->getBody());
+      $this->setTokenExpirationDate($content->token->expires_at);
+      return $this->getClient();
     }
 
     public function getEndpoint($arg) {
@@ -62,7 +65,9 @@ class IdentityService
     }
 
     public function getClient() {
-      if($this->client) return $this->client;
+      $now = new \DateTime('now');
+      $expire = new \DateTime($this->getTokenExpirationDate());
+      if($this->client && $expire > $now) return $this->client;
       else return $this->authenticate();
     }
 
@@ -74,5 +79,13 @@ class IdentityService
 
       $this->token = $token;
       $this->client = new Client(['headers' => ['X-Auth-Token' => $this->token]]);
+    }
+
+    public function setTokenExpirationDate($tokenExpirationDate) {
+      $this->tokenExpirationDate = $tokenExpirationDate;
+    }
+
+    public function getTokenExpirationDate() {
+      return $this->tokenExpirationDate;
     }
 }
