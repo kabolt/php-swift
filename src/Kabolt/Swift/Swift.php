@@ -13,7 +13,7 @@ class Swift
     {
       $this->identityService = $identityService;
     }
-    
+
     public function createContainer($name) {
       return new Container(['name' => $name], $this->identityService);
     }
@@ -31,6 +31,12 @@ class Swift
     public function createObject($name, $containerName) {
       return new Object(['name' => $name , 'containerName' => $containerName], $this->identityService);
     }
+
+    public function updateObjectMetadatas($objectName, $containerName, $metaHeaders, $isManifest = false) {
+      $obj = new Object(['name' => $objectName, 'containerName' => $containerName], $this->identityService);
+      return $obj->updateMetadatas($metaHeaders, $isManifest);
+    }
+
 
     public function getObjectPublicUrl($name, $containerName) {
         return $this->identityService->getEndpoint($containerName . '/' . $name);

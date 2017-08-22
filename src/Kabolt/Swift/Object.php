@@ -49,6 +49,14 @@ class Object
       }
     }
 
+    public function updateMetadatas($metaHeaders, $isManifest = false) {
+      $client = $this->is->getClient();
+      $method = $isManifest ? 'PUT' : 'POST';
+      return $client->request($method, $this->url, [
+        'headers' => $metaHeaders
+      ]);
+    }
+
     /**
      * Set the value of Content
      *
