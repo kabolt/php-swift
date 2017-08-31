@@ -11,6 +11,7 @@ class Object
     public $containerName;
     public $content;
     public $contentType;
+    public $lastModified;
     private $is;
 
     public function __construct($options, $identityService)
@@ -21,20 +22,26 @@ class Object
       $this->url = $this->is->getEndpoint($this->containerName . '/' . $this->name);
     }
 
-    public function download() {
+    public function download($queryOptions = null) {
       $client = $this->is->getClient();
-      $res = $client->request('GET', $this->url);
+      $res = $client->request('GET', $this->url, [
+        'query' => $queryOptions
+      ]);
       $this->setContent($res->getBody());
       $this->setContentType($res->getHeaderLine('Content-Type'));
+      $this->setLastModified($res->getHeaderLine('Last-Modified'));
       return $this->getContent();
     }
 
-    public function upload() {
+    public function upload($queryOptions = null) {
         if(null === $this->getContent())
           throw new \Exception("Swift: cannot upload empty object", 1);
 
         $client = $this->is->getClient();
-        $res = $client->request('PUT', $this->url, ['body' => $this->getContent()]);
+        $res = $client->request('PUT', $this->url, [
+          'body' => $this->getContent(),
+          'query' => $queryOptions
+        ]);
     }
 
     public function exists() {
@@ -49,11 +56,12 @@ class Object
       }
     }
 
-    public function updateMetadatas($metaHeaders, $isManifest = false) {
+    public function updateMetadatas($metaHeaders, $isManifest = false, $queryOptions = null) {
       $client = $this->is->getClient();
       $method = $isManifest ? 'PUT' : 'POST';
       return $client->request($method, $this->url, [
-        'headers' => $metaHeaders
+        'headers' => $metaHeaders,
+        'query' => $queryOptions
       ]);
     }
 
@@ -70,9 +78,11 @@ class Object
         return $this;
     }
 
-    public function delete() {
+    public function delete($queryOptions = null) {
       $client = $this->is->getClient();
-      $res = $client->request('DELETE', $this->url);
+      $res = $client->request('DELETE', $this->url, [
+        'query' => $queryOptions
+      ]);
     }
 
 
@@ -117,6 +127,31 @@ class Object
     public function getContentType()
     {
         return $this->contentType;
+    }
+
+
+    /**
+     * Set the value of Last Modified
+     *
+     * @param mixed lastModified
+     *
+     * @return self
+     */
+    public function setLastModified($lastModified)
+    {
+        $this->lastModified = $lastModified;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Last Modified
+     *
+     * @return mixed
+     */
+    public function getLastModified()
+    {
+        return $this->lastModified;
     }
 
 }
