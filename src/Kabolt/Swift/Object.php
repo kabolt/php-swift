@@ -11,6 +11,7 @@ class Object
     public $containerName;
     public $content;
     public $contentType;
+    public $contentLength;
     public $lastModified;
     private $is;
 
@@ -22,12 +23,14 @@ class Object
       $this->url = $this->is->getEndpoint($this->containerName . '/' . $this->name);
     }
 
-    public function download($queryOptions = null) {
+    public function download($queryOptions = null, $headers = null) {
       $client = $this->is->getClient();
-      $res = $client->request('GET', $this->url, [
-        'query' => $queryOptions
-      ]);
+      $options = [];
+      if($headers) $options['headers'] = $headers;
+      if($queryOptions) $options['query'] = $queryOptions;
+      $res = $client->request('GET', $this->url, $options);
       $this->setContent($res->getBody());
+      $this->setContentLength($res->getHeaderLine('Content-Length'));
       $this->setContentType($res->getHeaderLine('Content-Type'));
       $this->setLastModified($res->getHeaderLine('Last-Modified'));
       return $this->getContent();
@@ -83,6 +86,15 @@ class Object
       $res = $client->request('DELETE', $this->url, [
         'query' => $queryOptions
       ]);
+    }
+
+    public function setContentLength($contentLength) {
+      $this->contentLength = $contentLength;
+      return $this;
+    }
+
+    public function getContentLength() {
+      return $this->contentLength;
     }
 
 
