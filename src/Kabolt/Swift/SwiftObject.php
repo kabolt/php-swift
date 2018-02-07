@@ -4,7 +4,7 @@ namespace Kabolt\Swift;
 
 use GuzzleHttp\Client;
 
-class Object
+class SwiftObject
 {
 
     public $name;

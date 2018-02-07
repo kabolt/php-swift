@@ -24,16 +24,16 @@ class Swift
     }
 
     public function getObject($name, $containerName) {
-      $object = new Object(['name' => $name , 'containerName' => $containerName], $this->identityService);
+      $object = new SwiftObject(['name' => $name , 'containerName' => $containerName], $this->identityService);
       return $object->exists() ? $object : null;
     }
 
     public function createObject($name, $containerName) {
-      return new Object(['name' => $name , 'containerName' => $containerName], $this->identityService);
+      return new SwiftObject(['name' => $name , 'containerName' => $containerName], $this->identityService);
     }
 
     public function updateObjectMetadatas($objectName, $containerName, $metaHeaders, $isManifest = false) {
-      $obj = new Object(['name' => $objectName, 'containerName' => $containerName], $this->identityService);
+      $obj = new SwiftObject(['name' => $objectName, 'containerName' => $containerName], $this->identityService);
       return $obj->updateMetadatas($metaHeaders, $isManifest);
     }
 

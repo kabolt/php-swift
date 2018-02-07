@@ -20,11 +20,11 @@ class Container
     }
 
     public function getObject($name) {
-       return new Object(['name' => $name, 'containerName' => $this->name], $this->is);
+       return new SwiftObject(['name' => $name, 'containerName' => $this->name], $this->is);
     }
 
     public function createObject($name, $data) {
-      $object = new Object(['name' => $name, 'containerName' => $this->name], $this->is);
+      $object = new SwiftObject(['name' => $name, 'containerName' => $this->name], $this->is);
       $object->setContent($data);
       return $object;
     }
@@ -50,7 +50,7 @@ class Container
     }
 
     public function objectExists($objectName) {
-      $object = new Object(['name' => $name, 'containerName' => $this->name], $this->is);
+      $object = new SwiftObject(['name' => $name, 'containerName' => $this->name], $this->is);
       return $object->exists();
     }
 
