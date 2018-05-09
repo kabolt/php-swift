@@ -61,6 +61,13 @@ class Container
       return $this->lastObjectList;
     }
 
+    public function updateMetadatas($metadatas) {
+      $client = $this->is->getClient();
+      return $client->request('POST', $this->url, [
+        'headers' => $metadatas
+      ]);
+    }
+
     /**
      * Get the value of Name
      *

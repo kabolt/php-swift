@@ -37,6 +37,11 @@ class Swift
       return $obj->updateMetadatas($metaHeaders, $isManifest);
     }
 
+    public function updateCOntainerMetaDatas($containerName, $metaHeaders) {
+      $container = new Container(['name' => $name], $this->identityService);
+      return $ $container->updateMetadatas($metaHeaders);
+    }
+
 
     public function getObjectPublicUrl($name, $containerName) {
         return $this->identityService->getEndpoint($containerName . '/' . $name);
